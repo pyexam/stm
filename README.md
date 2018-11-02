@@ -14,7 +14,9 @@ please connect wxc1964@126.com if you find any problems
 # Level Score Model 等级分数模型
 
 (1) 用于浙江、上海、北京、天津等省新高考中的等级赋分模型。
+
 the level score model, that is used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin New High Test。
+
 等级分数模型通过以下步骤完成：
 1. 指定比例，划分原始分数为各个等级区间
 2. 每个区间指定等级
