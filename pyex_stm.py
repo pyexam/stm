@@ -110,13 +110,13 @@ def run(name='shandong',
     :param name: str, 'shandong', 'shanghai', 'shandong', 'beijing', 'tianjin', 'zscore', 'tscore', 'tlinear'
     :param df: dataframe, input data
     :param field_list: score fields list in input dataframe
-    :param input_score_max: max value in raw score
-    :param input_score_min: min value in raw score
-    :param level_ratio: ratio list used to create intervals of raw score for each level
-    :param output_score_decimal: output score decimal digits
-    :param approx_method: maxmin, minmax, nearmin, nearmax
+    :param ratio: ratio list used to create intervals of raw score for each level
     :param level_diff: difference value between two neighbor level score
     :param level_max: max value for level score
+    :param input_score_max: max value in raw score
+    :param input_score_min: min value in raw score
+    :param output_score_decimal: output score decimal digits
+    :param approx_method: maxmin, minmax, nearmin, nearmax
     :return: model
     """
     # check name
@@ -163,6 +163,7 @@ def run(name='shandong',
     if name in 'zhejiang, shanghai, beijing, tiangjin':
         level_max = 100
         level_diff = 3
+        ratio_list = None
         if name == 'zhejiang':
             # ● 浙江21等级方案  均值71.26，  标准差13.75，   	 归一值22.93
             ratio_list = zhejiang_ratio
@@ -176,9 +177,7 @@ def run(name='shandong',
         elif name == 'tianjin':
             # ● 天津21等级方案  均值72.94，  标准差14.36，      归一值23.94
             ratio_list = tianjin_ratio
-        elif isinstance(ratio, tuple) or isinstance(ratio, list):
-            # 类似浙江模型 similar to Zhejiang
-            ratio_list = ratio
+
         level_score = [level_max - j * level_diff for j in range(len(ratio_list))]
 
         m = LevelScore()
@@ -250,7 +249,7 @@ def run(name='shandong',
         return m
 
 
-def plot_model_distribution():
+def plot():
     plt.figure('model ratio distribution')
     plt.rcParams.update({'font.size': 16})
     plt.subplot(231)
@@ -1037,8 +1036,7 @@ class Tscore(ScoreTransformModel):
         if type(self.input_data) == pd.DataFrame:
             print('raw score desc:')
             print('    fields:', self.field_list)
-            report_describe(
-                self.input_data[self.field_list])
+            print(self.input_data[self.field_list].describe())
             print('-'*50)
         else:
             print('output score data is not ready!')
@@ -1046,8 +1044,7 @@ class Tscore(ScoreTransformModel):
             out_fields = [f+'_tscore' for f in self.field_list]
             print('T-score desc:')
             print('    fields:', out_fields)
-            report_describe(
-                self.output_data[out_fields])
+            print(self.output_data[out_fields].describe())
             print('-'*50)
         else:
             print('output score data is not ready!')
@@ -1121,13 +1118,13 @@ class TscoreLinear(ScoreTransformModel):
         print('-' * 50)
         if type(self.input_data) == pd.DataFrame:
             print('raw score desc:')
-            report_describe(self.input_data)
+            print(self.input_data[[f for f in self.field_list]].describe())
             print('-'*50)
         else:
             print('output score data is not ready!')
         if type(self.output_data) == pd.DataFrame:
             print('raw,T,Z score desc:')
-            report_describe(self.output_data)
+            print(self.output_data[[f+'_tscore' for f in self.field_list]].describe())
             print('-'*50)
         else:
             print('output score data is not ready!')
@@ -1158,7 +1155,7 @@ class LevelScore(ScoreTransformModel):
 
         self.input_score_max = 100
         self.input_score_min = 0
-        self.ratio_grade_table = [sum(__zhejiang_ratio[0:j + 1]) * 0.01
+        self.ratio_grade_table = [round45i(sum(__zhejiang_ratio[0:j + 1]) * 0.01, 2)
                                   for j in range(len(__zhejiang_ratio))]
         self.level_score_table = [100 - x * 3 for x in range(len(self.ratio_grade_table))]
         self.level_no = [x for x in range(1, len(self.ratio_grade_table) + 1)]
@@ -1197,17 +1194,18 @@ class LevelScore(ScoreTransformModel):
         if isinstance(minscore, int):
             self.input_score_min = minscore
         if isinstance(level_ratio_table, list) or isinstance(level_ratio_table, tuple):
-            self.ratio_grade_table = [1 - sum(level_ratio_table[0:j + 1]) * 0.01
+            self.ratio_grade_table = [round45i(1 - sum(level_ratio_table[0:j + 1]) * 0.01, 2)
                                       for j in range(len(level_ratio_table))]
             if sum(level_ratio_table) != 100:
-                print('ratio table is wrong, sum is not 100! sum={}'.format(sum(level_ratio_table)))
+                print('ratio table is wrong, sum:{} is not 100!'.format(sum(level_ratio_table)))
         if isinstance(level_score_table, list) or isinstance(level_score_table, tuple):
             self.level_score_table = level_score_table
         if len(self.ratio_grade_table) != len(self.level_score_table):
             print('error level data set, ratio/score table is not same length!')
             print(self.ratio_grade_table, '\n', self.level_score_table)
-        self.level_no = [x for x in range(1, len(self.ratio_grade_table) + 1)]
+        self.level_no = [x+1 for x in range(len(self.ratio_grade_table))]
         self.level_order = 'd' if self.level_score_table[0] > self.level_score_table[-1] else 'a'
+        self.ratio_grade_table = [1] + self.ratio_grade_table
         if approx_method in self.approx_method_set:
             self.approx_method = approx_method
 
@@ -1217,6 +1215,8 @@ class LevelScore(ScoreTransformModel):
             return
         print("--- Level Score Transform Start ---")
         t0 = time.time()
+
+        # create seg-percent map table
         seg = SegTable()
         seg.set_data(input_data=self.input_data,
                      field_list=self.field_list)
@@ -1225,51 +1225,120 @@ class LevelScore(ScoreTransformModel):
                            segsort=self.level_order)
         seg.run()
         self.segtable = seg.output_data
-        self.__get_level_table_report()
+
+        # key step: create level score map list
+        # self.__get_level_table()
+        self.get_level_map_by_approx()  # new method by approx
+
+        # make output_data by map
         self.output_data = self.input_data[self.field_list]
         self.report_doc = {}
         dtt = self.segtable
         for sf in self.field_list:
             print('transform score at field:{} ...'.format(sf))
-            dft = self.output_data.copy()
+            dft = self.output_data
+
+            # get percent
             dft[sf+'_percent'] = dft.loc[:, sf].replace(
                 self.segtable['seg'].values, self.segtable[sf+'_percent'].values)
-            dft[sf+'_percent'] = dft[sf+'_percent'].apply(
-                lambda x: x if x in dtt['seg'] else -1)
+            # dft[sf+'_percent'] = dft[sf+'_percent'].apply(
+                # lambda x: x if x in dtt['seg'] else -1)
+
+            # get level no by map
             dft.loc[:, sf+'_level'] = dft.loc[:, sf].replace(
                 self.segtable['seg'].values, self.segtable[sf + '_level'].values)
-            dft[sf+'_level'] = dft[sf+'_level'].apply(
-                lambda x: x if x in self.level_no else -1)
+            # dft[sf+'_level'] = dft[sf+'_level'].apply(lambda x: x if x in self.level_no else -1)
+
+            # get level score by map
             dft.loc[:, sf+'_level_score'] = \
                 dft.loc[:, sf+'_level'].apply(lambda x: self.level_score_table[int(x)-1]if x > 0 else x)
-            # format to int
-            dft = dft.astype({sf+'_level': int, sf+'_level_score': int})
+            if self.output_data_decimal == 0:
+                # format to int
+                dft = dft.astype({sf+'_level': int, sf+'_level_score': int})
+
+            # save to output_data
             self.output_data = dft
+
+            # save to report_doc
             level_max = self.segtable.groupby(sf+'_level')['seg'].max()
             level_min = self.segtable.groupby(sf+'_level')['seg'].min()
             self.report_doc.update({sf: ['level({}):{}-{}'.format(j+1, x[0], x[1])
                                          for j, x in enumerate(zip(level_max, level_min))]})
+            pt = pd.pivot_table(self.segtable, values='seg', index=sf + '_level', aggfunc=[max, min])
+            self.result_dict.update({sf: [(idx, (pt.loc[idx, ('min', 'seg')], pt.loc[idx, ('max', 'seg')]))
+                                          for idx in pt.index]})
+        # running end
         print('used time:{:6.4f}'.format(time.time()-t0))
         print('---Level Score Transform End---')
 
-    def __percent_map_level(self, p):
-        p_start = 0 if self.level_order == 'a' else 1
-        for j, r in enumerate(self.ratio_grade_table):
-            logic = (p_start <= p <= r) if self.level_order == 'a' else (p_start >= p >= r)
-            if logic:
-                return self.level_no[j]
-            p_start = r
-        return self.level_no[-1]
-
-    def __get_level_table_report(self):
+    # make map seg_percent to level in segtable, used to calculate level score
+    def __get_level_table(self):
         for sf in self.field_list:
             self.segtable.loc[:, sf+'_level'] = self.segtable[sf+'_percent'].\
-                apply(lambda x: self.__percent_map_level(1-x))
+                apply(lambda x: self.__map_percent_to_level(1 - x))
             self.segtable.astype({sf+'_level': int})
             pt = pd.pivot_table(self.segtable, values='seg', index=sf+'_level', aggfunc=[max, min])
             self.result_dict.update({sf: [(idx, (pt.loc[idx, ('min', 'seg')], pt.loc[idx, ('max', 'seg')]))
                                           for idx in pt.index]}
                                     )
+
+    def __map_percent_to_level(self, p):
+        # p_start = 0 if self.level_order in 'a, ascending' else 1
+        for j in range(len(self.ratio_grade_table)-1):
+            # logic = (p_start <= p <= r) if self.level_order in 'a, ascending' else (r <= p <= p_start)
+            if self.ratio_grade_table[j] >= p >= self.ratio_grade_table[j+1]:
+                return self.level_no[j]
+        print('percent:{} not found in {}'.format(p, self.ratio_grade_table))
+        return self.level_no[-1]
+
+    # calculate level score by approx_method
+    def get_level_map_by_approx(self):
+        ratio_table = [1-x for x in self.ratio_grade_table[1:]]
+        for sf in self.field_list:
+            self.segtable.loc[:, sf+'_level'] = self.segtable[sf+'_percent'].apply(lambda x: 1)
+            self.segtable.astype({sf+'_level': int})
+            last_p = 0
+            curr_level_no = self.level_no[0]
+            curr_level_ratio = ratio_table[0]
+            curr_level_score = self.level_score_table[0]
+            max_count = self.segtable['seg'].count()
+            for ri, rv in self.segtable.iterrows():
+                self.segtable.loc[ri, sf + '_level'] = curr_level_no
+                self.segtable.loc[ri, sf + '_level_score'] = curr_level_score
+                if rv[sf+'_percent'] == 1:  # set to end level and score
+                    self.segtable.loc[ri, sf+'_level'] = self.level_no[-1]
+                    self.segtable.loc[ri, sf+'_level_score'] = self.level_score_table[-1]
+                    continue
+                curr_p = rv[sf+'_percent']
+                if curr_p >= curr_level_ratio:
+                    curr_to_new_level = False
+                    d1 = abs(curr_level_ratio - last_p)
+                    d2 = abs(curr_level_ratio - curr_p)
+                    if d1 < d2:
+                        if self.approx_method in 'minmax, near':
+                             curr_to_new_level = True
+                    elif d1 == d2:
+                        if self.approx_method in 'minmax, nearmin, minnear':
+                             curr_to_new_level = True
+                    else:  # d2 < d1
+                        if self.approx_method in 'minmax':
+                             curr_to_new_level = True
+                    if curr_to_new_level:
+                        curr_level_no += 1
+                        curr_level_ratio = ratio_table[curr_level_no-1]
+                        curr_level_score = self.level_score_table[curr_level_no - 1]
+                        self.segtable.loc[ri, sf + '_level'] = curr_level_no
+                        self.segtable.loc[ri, sf + '_level_score'] = curr_level_score
+                    else:
+                        self.segtable.loc[ri, sf+'_level'] = curr_level_no
+                        self.segtable.loc[ri, sf+'_level_score'] = curr_level_score
+                        if ri < max_count & self.segtable.loc[ri+1, sf+'_count'] > 0:
+                            curr_level_no += 1
+                            curr_level_ratio = ratio_table[curr_level_no-1]
+                            curr_level_score = self.level_score_table[curr_level_no - 1]
+                last_p = curr_p
+            if self.output_data_decimal == 0:
+                self.segtable = self.segtable.astype({sf+'_level_score': int})
 
     def report(self):
         print('Level-score Transform Report')
@@ -1421,7 +1490,7 @@ class LevelScoreTao(ScoreTransformModel):
         pass
 
     def report(self):
-        report_describe(self.output_data[[f+'_level' for f in self.field_list]])
+        print(self.output_data[[f+'_level' for f in self.field_list]].describe())
 
     def print_segtable(self):
         # print(ptt.make_mpage(self.segtable))
@@ -1901,7 +1970,6 @@ class SegTable(object):
             if step == len(self.field_list):
                 plt.legend(legendlist)
             plt.show()
-
 # SegTable class end
 
 
@@ -1909,65 +1977,6 @@ def round45i(v: float, dec=0):
     u = int(v * 10 ** dec * 10)
     r = (int(u / 10) + (1 if v > 0 else -1)) / 10 ** dec if (abs(u) % 10 >= 5) else int(u / 10) / 10 ** dec
     return int(r) if dec <= 0 else r
-
-
-# use scipy.stats descibe report dataframe info
-def report_describe(df, decimal=4):
-    """
-    report statistic describe of a dataframe, with decimal digits = decnum
-    峰度（Kurtosis）与偏态（Skewness）是量测数据正态分布特性的两个指标。
-    峰度衡量数据分布的平坦度（flatness）。尾部大的数据分布峰度值较大。正态分布的峰度值为3。
-        Kurtosis = 1/N * Sigma(Xi-Xbar)**4 / (1/N * Sigma(Xi-Xbar)**2)**2
-    偏态量度对称性。0 是标准对称性正态分布。右（正）偏态表明平均值大于中位数，反之为左（负）偏态。
-        Skewness = 1/N * Sigma(Xi-Xbar)**3 / (1/N * Sigma(Xi-Xbar)**2)**3/2
-    :param
-        dataframe: pandas DataFrame, raw data
-        decnum: decimal number in report print
-    :return(print)
-        records
-        min,max
-        mean
-        variance
-        skewness
-        kurtosis
-    """
-
-    def uf_list2str(listvalue, decimal):
-        return ''.join([('{:' + '1.' + str(decimal) + 'f}  ').
-                       format(round45i(x, decimal)) for x in listvalue])
-
-    def uf_list2sqrt2str(listvalue, decimal):
-        return uf_list2str([np.sqrt(x) for x in listvalue], decimal)
-
-    pr = [[sts.pearsonr(df[x], df[y])[0]
-           for x in df.columns] for y in df.columns]
-    sd = sts.describe(df)
-    cv = df.cov()
-    print('\trecords: ', sd.nobs)
-    print('\tpearson recorrelation:')
-    for i in range(len(df.columns)):
-        print('\t', uf_list2str(pr[i], 4))
-    print('\tcovariance matrix:')
-    for j in range(len(cv)):
-        print('\t', uf_list2str(cv.iloc[j, :], 4))
-    print('\tmin : ', uf_list2str(sd.minmax[0], 4))
-    print('\tmax : ', uf_list2str(sd.minmax[1], 4))
-    print('\tmean: ', uf_list2str(sd.mean, decimal))
-    print('\tvar : ', uf_list2str(sd.variance, decimal))
-    print('\tstd : ', uf_list2sqrt2str(sd.variance, decimal))
-    print('\tskewness: ', uf_list2str(sd.skewness, decimal))
-    print('\tkurtosis: ', uf_list2str(sd.kurtosis, decimal))
-    dict = {'record': sd.nobs,
-            'max': sd.minmax[1],
-            'min': sd.minmax[0],
-            'mean': sd.mean,
-            'var': sd.variance,
-            'cov': cv,
-            'cor': pr,
-            'skewness': sd.skewness,
-            'kurtosis': sd.kurtosis,
-            }
-    return dict
 
 
 def exp_norm_data(mean=70, std=10, maxvalue=100, minvalue=0, size=1000, decimal=6):
