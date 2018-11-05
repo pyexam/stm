@@ -41,13 +41,13 @@ the model used in Shandong New High-Test Project
 
 1. import module 导入模块
    
-   >>>import pyex_stm as stm
+   import pyex_stm as stm
    
 2. get module information from function see() 调用see()函数查看模块的信息
 
    >>>stm.see（）
    
-       module function and class:
+    module function and class:
     
     [function] 模块中的主要函数
    
