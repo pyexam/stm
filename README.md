@@ -45,11 +45,11 @@ the model used in Shandong New High-Test Project
    
 2. get module information from function see() 调用see()函数查看模块的信息
 
-   >>>stm.see（）
+   stm.see（）
    
-    module function and class:
+   module function and class:
     
-    [function] 模块中的主要函数
+   [function] 模块中的主要函数
    
           run(name, df, field_list, ratio, level_max, level_diff, input_score_max, input_score_min,
           
@@ -160,20 +160,22 @@ the model used in Shandong New High-Test Project
 
     output score endpoints: [(100, 91), (90, 81), (80, 71), (70, 61), (60, 51), (50, 41), (40, 31), (30, 21)]
 
-    transform formulas: 0.5*(x-74)+91
+    transform formulas: 
+    
+         0.5*(x-74)+91
 
-    1.5*(x-67)+81
+         1.5*(x-67)+81
 
-    1.125*(x-58)+71
+         1.125*(x-58)+71
 
-    0.818182*(x-46)+61
+         0.818182*(x-46)+61
 
-    0.692308*(x-32)+51
+         0.692308*(x-32)+51
 
-    0.818182*(x-20)+41
+         0.818182*(x-20)+41
 
-    0.818182*(x-8)+31
+         0.818182*(x-8)+31
 
-    1.285714*(x-0)+21
+         1.285714*(x-0)+21
 
     ------------------------------------------------------------------------------------------
