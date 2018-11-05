@@ -112,11 +112,11 @@ the model used in Shandong New High-Test Project
           
           plot models distribution hist graph including shandong,zhejiang,shanghai,beijing,tianjin
           
-       round45i:四舍五入函数
+       round45i():四舍五入函数
           
           function for rounding strictly at some decimal position
           
-       exp_norm_table: 根据均值和标准差数生成正态分布表
+       get_norm__dist_table(size, mean, std, stdnum): 根据均值和标准差数生成正态分布表
        
        creating norm data dataframe with assigned mean and standard deviation
     
