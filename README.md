@@ -1,15 +1,16 @@
 
-# Introductio
+# Introduction 导言
 score transform model
-
+分数转换模型
 models include: zhejiang/shanghai/shandong/beijing/tianjian level score model
-
+模型中包括： 浙江 上海 山东 北京 天津 的等级分数转换模型
 also include: Zscore, Tscore
-
+也包括： Z分数 T分数 转换
 even include: level score model that Tao Baiqiang designed in his article.
+也包括： 陶百强提出的等级分数转换模型
 
-
-please connect wxc1964@126.com if you find any problems
+designer, Wang Xichang, wxc1964@126.com
+设计者，姓名，信箱 
 
 # Level Score Model 等级分数模型
 
