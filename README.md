@@ -138,13 +138,13 @@ the model used in Shandong New High-Test Project
     
 
    
-2. use interface function run() 使用模块的入口函数run()
+3. use interface function run() 使用模块的入口函数run()
 
    >>>result = stm.run(name='shandong', df=data, field_list=['ls'])  
    
    calculate level score by using shandong model, subject is 'ls' in input dataframe "data"
    
-3. result of model 模型运行结果
+4. result of model 模型运行结果
 
    display report 显示运行报告
    
@@ -179,3 +179,8 @@ the model used in Shandong New High-Test Project
          1.285714*(x-0)+21
 
     ------------------------------------------------------------------------------------------
+
+# 模块中的分段表模型 SegTable
+  用于生成某些分数范围的每个分值点的某些科目得分你的人数。
+  
+
