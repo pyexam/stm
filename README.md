@@ -188,7 +188,11 @@ the model used in Shandong New High-Test Project
 
 # 模块中的分段表模型 SegTable
   
-  用于生成某些分数范围的每个分值点的某些科目得分你的人数。
+  用于生成某些分数范围的每个分值点的指定科目得该分数的人数。
+  
+  输入数据： 一组考生的某些科目的成绩（pandas.DataFrame）。每个记录为一个考生，列指定考生考试科目。
+  
+  输出数据：seg(分段分数点），[字段名]_count, []_percent, []_cumsum
   
   --edit in progress
   
