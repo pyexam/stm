@@ -100,25 +100,31 @@ the model used in Shandong New High-Test Project
           
           usage:
           
-          >>>import pyex_stm as stm
+          [1] import pyex_stm as stm
           
-          >>>result = stm.run(name='shandong', df=data, field_list=['ls'])
+          [2] result = stm.run(name='shandong', df=data, field_list=['ls'])
           
-          >>>result.report()
+          [3] result.report()
           
-          >>>result.output.head()
+          [4] result.output.head()
           
-       plot(): 各方案按照比例转换后分数后的分布直方图
+       plot(): 
+          
+          各方案按照比例转换后分数后的分布直方图
           
           plot models distribution hist graph including shandong,zhejiang,shanghai,beijing,tianjin
           
-       round45i():四舍五入函数
+       round45i():
+          
+          四舍五入函数
           
           function for rounding strictly at some decimal position
           
-       get_norm__dist_table(size, mean, std, stdnum): 根据均值和标准差数生成正态分布表
+       get_norm__dist_table(size, mean, std, stdnum): 
+          
+          根据均值和标准差数生成正态分布表
        
-       creating norm data dataframe with assigned mean and standard deviation
+          creating norm data dataframe with assigned mean and standard deviation
     
     [class] 模块中的类
     
@@ -140,7 +146,7 @@ the model used in Shandong New High-Test Project
    
 3. use interface function run() 使用模块的入口函数run()
 
-   >>>result = stm.run(name='shandong', df=data, field_list=['ls'])  
+   [1] result = stm.run(name='shandong', df=data, field_list=['ls'])  
    
    calculate level score by using shandong model, subject is 'ls' in input dataframe "data"
    
@@ -148,7 +154,7 @@ the model used in Shandong New High-Test Project
 
    display report 显示运行报告
    
-   >>>result.report()
+   [1] result.report()
    
    ---<< score field: [lsn] >>---
    
@@ -181,6 +187,9 @@ the model used in Shandong New High-Test Project
     ------------------------------------------------------------------------------------------
 
 # 模块中的分段表模型 SegTable
+  
   用于生成某些分数范围的每个分值点的某些科目得分你的人数。
+  
+  --edit in progress
   
 
