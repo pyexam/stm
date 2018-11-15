@@ -19,25 +19,27 @@ designer, Wang Xichang, wxc1964@126.com
 
 # Level Score Model 等级分数模型
 
-(1) 用于浙江、上海、北京、天津等省新高考中的等级赋分模型。
+用于浙江、上海、北京、天津、山东新高考中的等级赋分模型。
 
-the level score model, that is used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin New High Test。
+used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, New High Test projects。
 
-等级分数模型通过以下步骤完成：
-1. 指定比例，划分原始分数为各个等级区间
-2. 每个区间指定等级
-3. 每个等级指定分数
-4. 从各个考生的原始分数，通过其所在区间得到等级，通过等级得到等级分数。
+等级分数转换通过以下步骤完成：
+1. 根据规定比例，划分原始分数为各个等级区间
+2. 每个等级区间赋予分数（山东方案使用线性转换为多个分值，其他省方案直接标定一个分数）
+3. 各个考生的原始分数，先对应到等级，再转换为等级分数。
 
-stm的计算过程：
-1. 计算分数字段的分段表，每个字段包括四个值：分段值（某一分值），对应该分段值的的人数，百分比，累积百分比，分段值按照顺序（默认从高到低）
+计算过程：
+1. 计算分数字段的分段表，分段表包括四个列（字段）：分段值（分值点），对应该分段值的的人数，百分比，累积百分比，分段值按照顺序（默认从高到低）
 2. 在分段表中计算，每个分段值对应的等级，等级分数
-3. 使用分段表计算每个考生该分数字段的等级分数
+3. 使用分段表计算每个考生原始分数对应的等级分数
 
-(2) 用于山东省等级分数转换的模型
-the model used in Shandong New High-Test Project
+算法设计：
+1. 精度问题
+2. 区间端点计算方式
 
-# use module 使用模块
+
+
+# 如何使用STM模块 how to use stm 
 
 1. import module 导入模块
    
@@ -45,7 +47,7 @@ the model used in Shandong New High-Test Project
    
 2. get module information from function see() 调用see()函数查看模块的信息
 
-   stm.see（）
+   stm.help_doc（）
    
    module function and class:
     
