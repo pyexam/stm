@@ -188,14 +188,95 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
 
     ------------------------------------------------------------------------------------------
 
-# 模块中的分段表模型 SegTable
+# 分段表模型 SegTable
   
   用于生成某些分数范围的每个分值点的指定科目得该分数的人数。
   
   输入数据： 一组考生的某些科目的成绩（pandas.DataFrame）。每个记录为一个考生，列指定考生考试科目。
   
   输出数据：seg(分段分数点），[字段名]_count, []_percent, []_cumsum
+
+  应用SegTable.helpdoc()可以查看说明：
   
-  --edit in progress
+      * 计算pandas.DataFrame中分数字段的分段人数表
+    * segment table for score dataframe
+    * version1.01, 2018-06-21
+    * version1.02, 2018-08-31
+    * from 09-17-2017
+
+    输入数据：分数表（pandas.DataFrame）,  计算分数分段人数的字段（list）
+    set_data(input_data:DataFrame, field_list:list)
+        input_data: input dataframe, with a value fields(int,float) to calculate segment table
+                用于计算分段表的数据表，类型为pandas.DataFrmae
+        field_list: list, field names used to calculate seg table, empty for calculate all fields
+                   用于计算分段表的字段，多个字段以字符串列表方式设置，如：['sf1', 'sf2']
+                   字段的类型应为可计算类型，如int,float.
+
+    设置参数：最高分值，最低分值，分段距离，分段开始值，分数顺序，指定分段值列表， 使用指定分段列表，使用所有数据， 关闭计算过程显示信息
+    set_parameters（segmax, segmin, segstep, segstart, segsort, seglist, useseglist, usealldata, display）
+        segmax: int, maxvalue for segment, default=150
+                输出分段表中分数段的最大值
+        segmin: int, minvalue for segment, default=0。
+                输出分段表中分数段的最小值
+        segstep: int, grades for segment value, default=1
+                分段间隔，用于生成n-分段表（五分一段的分段表）
+        segstart:int, start seg score to count
+                进行分段计算的起始值
+        segsort: str, 'a' for ascending order or 'd' for descending order, default='d' (seg order on descending)
+                输出结果中分段值得排序方式，d: 从大到小， a：从小到大
+                排序模式的设置影响累计数和百分比的意义。
+        seglist: list, used to create set value
+                 使用给定的列表产生分段表，列表中为分段点值
+        useseglist: bool, use or not use seglist to create seg value
+                 是否使用给定列表产生分段值
+        usealldata: bool, True: consider all score , the numbers outside are added to segmin or segmax
+                 False: only consider score in [segmin, segmax] , abort the others records
+                 default=False.
+                 考虑最大和最小值之外的分数记录，高于的segmax的分数计数加入segmax分数段，
+                 低于segmin分数值的计数加入segmin分数段
+        display: bool, True: display run() message include time consume, False: close display message in run()
+                  打开（True）或关闭（False）在运行分段统计过程中的显示信息
+    output_data: 输出分段数据
+            seg: seg value
+        [field]: field name in field_list
+        [field]_count: number at the seg
+        [field]_sum: cumsum number at the seg
+        [field]_percent: percentage at the seg
+        [field]_count[step]: count field for step != 1
+        [field]_list: count field for assigned seglist when use seglist
+    运行，产生输出数据, calculate and create output data
+    run()
+
+    应用举例
+    example:
+        seg = SegTable()
+        df = pd.DataFrame({'sf':[i % 11 for i in range(100)]})
+        seg.set_data(df, ['sf'])
+        seg.set_parameters(segmax=100, segmin=1, segstep=1, segsort='d', usealldata=True, display=True)
+        seg.run()
+        seg.plot()
+        print(seg.output_data.head())    # get result dataframe, with fields: sf, sf_count, sf_cumsum, sf_percent
+
+    Note:
+        1)根据usealldata确定是否在设定的区间范围内计算分数值
+          usealldata=True时抛弃不在范围内的记录项
+          usealldata=False则将高于segmax的统计数加到segmax，低于segmin的统计数加到segmin
+          segmax and segmin used to constrain score value scope to be processed in [segmin, segmax]
+          segalldata is used to include or exclude data outside [segmin, segmax]
+
+        2)分段字段的类型为整数或浮点数（实数）
+          field_list type is digit, for example: int or float
+
+        3)可以单独设置数据(input_data),字段列表（field_list),各项参数（segmax, segmin, segsort,segalldata, segmode)
+          如，seg.field_list = ['score_1', 'score_2'];
+              seg.segmax = 120
+          重新设置后需要运行才能更新输出数据ouput_data, 即调用run()
+          便于在计算期间调整模型。
+          by usting property mode, rawdata, scorefields, parameters can be setted individually
+        4) 当设置大于1分的分段分值X时， 会在结果DataFrame中生成一个字段[segfiled]_countX，改字段中不需要计算的分段
+          值设为-1。
+          when segstep > 1, will create field [segfield]_countX, X=str(segstep), no used value set to -1 in this field
+    
+
   
 
