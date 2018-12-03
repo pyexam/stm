@@ -51,13 +51,13 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
   
    --- start calculating map_table ---
 
-   --start transform score field: <<dl>>  //开始转换分数dl(地理科目)
+   --start transform score field: <<dl>>   // 开始转换分数dl(地理科目)
  
-   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]  //筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的数据
+   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]  // 筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的数据
  
-   -- get input score endpoints ... //设置 分数区间
+   -- get input score endpoints ... // 设置 分数区间
       
-      begin calculating ...   //开始转换分数
+      begin calculating ...   // 开始转换分数
       
       merge score field: dl_plt  //合并分数字段
       
@@ -98,12 +98,18 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
    [4] result.plot()  // 显示转换模型
    
    [5] result.report()  // 运行结果报告
+   
    ---<< score field: [ls] >>---
+
 input score  mean, std: 43.84, 18.01
+
 input score percentage: [0.03, 0.07, 0.16, 0.24, 0.24, 0.16, 0.07, 0.03]
+
 input score  endpoints: [(92, 74), (73, 67), (66, 58), (57, 46), (45, 32), (31, 20), (19, 8), (7, 0)]
+
 output score endpoints: [(100, 91), (90, 81), (80, 71), (70, 61), (60, 51), (50, 41), (40, 31), (30, 21)]
-    transform formulas: 0.5*(x-74)+91
+
+transform formulas: 0.5*(x-74)+91
                         1.5*(x-67)+81
                         1.125*(x-58)+71
                         0.818182*(x-46)+61
@@ -114,11 +120,16 @@ output score endpoints: [(100, 91), (90, 81), (80, 71), (70, 61), (60, 51), (50,
 ------------------------------------------------------------------------------------------
 
 ---<< score field: [dl] >>---
+
 input score  mean, std: 53.43, 16.89
+
 input score percentage: [0.03, 0.07, 0.16, 0.24, 0.24, 0.16, 0.07, 0.03]
+
 input score  endpoints: [(96, 80), (79, 74), (73, 65), (64, 56), (55, 45), (44, 33), (32, 16), (15, 0)]
+
 output score endpoints: [(100, 91), (90, 81), (80, 71), (70, 61), (60, 51), (50, 41), (40, 31), (30, 21)]
-    transform formulas: 0.5625*(x-80)+91
+
+transform formulas: 0.5625*(x-80)+91
                         1.8*(x-74)+81
                         1.125*(x-65)+71
                         1.125*(x-56)+61
@@ -126,6 +137,7 @@ output score endpoints: [(100, 91), (90, 81), (80, 71), (70, 61), (60, 51), (50,
                         0.818182*(x-33)+41
                         0.5625*(x-16)+31
                         0.6*(x-0)+21
+
 ------------------------------------------------------------------------------------------
       
 2. get module information from function see() 调用see()函数查看模块的信息
