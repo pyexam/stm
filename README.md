@@ -14,8 +14,7 @@ also include: Zscore, Tscore，level score model that Tao Baiqiang designed in h
 也包括： Z分数、T分数转换，陶百强提出的等级分数转换模型
 
 designer, Wang Xichang, wxc1964@126.com
-
-设计者，姓名，信箱 
+ 
 
 # Level Score Model 等级分数模型
 
@@ -50,21 +49,21 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
    
    [2] result = stm.run(name='shandong', df=data, field_list=('dl', 'ls'))
   
-  --- start calculating map_table ---
+   --- start calculating map_table ---
 
-   --start transform score field: <<dl>> # 开始转换分数dl(地理科目)
+   --start transform score field: <<dl>>  //开始转换分数dl(地理科目)
  
-   use filter: [(df.dl>=0.0) & (df.dl<=96.0)] # 筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的分数
+   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]  //筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的数据
  
-   -- get input score endpoints ... # 设置 分数区间
+   -- get input score endpoints ... //设置 分数区间
       
-      begin calculating ...   # 开始转换分数
+      begin calculating ...   //开始转换分数
       
-      merge score field: dl_plt  # 合并分数字段
+      merge score field: dl_plt  //合并分数字段
       
-      create report ... # 生成报告
+      create report ... //生成报告
   
-  --start transform score field: <<ls>>
+   --start transform score field: <<ls>>
   
       use filter: [(df.ls>=0.0) & (df.ls<=96.0)]
  
@@ -76,7 +75,7 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
       
       create report ...
     
-   used time: 3.1701080799102783 # 运行时间
+   used time: 3.1701080799102783 //运行耗时（秒）
    
    --------------------------------------------------
    
