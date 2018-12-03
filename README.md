@@ -43,8 +43,37 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
 
 1. import module 导入模块
    
-   import pyex_stm as stm
+   [1] import pyex_stm as stm
    
+    # 使用山东模型对数据框data中的分数字段ls和dl进行转换
+    # use model shandong to transform at score field ls and dl
+   
+   [2] result = stm.run(name='shandong', df=data, field_list=('ls', 'dl'))
+   --- start calculating map_table ---
+    --start transform score field: <<ls>>
+      use filter: [(df.ls>=0.0) & (df.ls<=96.0)]
+   -- get input score endpoints ...
+      begin calculating ...
+      merge score field: ls_plt
+      create report ...
+   --start transform score field: <<dl>>
+      use filter: [(df.dl>=0.0) & (df.dl<=96.0)]
+   -- get input score endpoints ...
+      begin calculating ...
+      merge score field: dl_plt
+      create report ...
+   used time: 3.1701080799102783
+   --------------------------------------------------
+   
+   [3] result.output_data.head()  # 查看运行结果 view the result
+   Out[1]: 
+      dl  ls  dl_plt  ls_plt
+   0  85  90      94      99
+   1  92  85      98      97
+   2  92  73      98      90
+   3  88  90      96      99
+   4  93  76      98      92
+      
 2. get module information from function see() 调用see()函数查看模块的信息
 
    stm.help_doc（）
