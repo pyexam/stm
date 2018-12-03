@@ -48,9 +48,21 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
     # 使用山东模型对数据框data中的分数字段ls和dl进行转换
     # use model shandong to transform at score field ls and dl
    
-   [2] result = stm.run(name='shandong', df=data, field_list=('ls', 'dl'))
+   [2] result = stm.run(name='shandong', df=data, field_list=('dl', 'ls'))
   
   --- start calculating map_table ---
+
+   --start transform score field: <<dl>> # 开始转换分数dl(地理科目)
+ 
+   use filter: [(df.dl>=0.0) & (df.dl<=96.0)] # 筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的分数
+ 
+   -- get input score endpoints ... # 设置 分数区间
+      
+      begin calculating ...   # 开始转换分数
+      
+      merge score field: dl_plt  # 合并分数字段
+      
+      create report ... # 生成报告
   
   --start transform score field: <<ls>>
   
@@ -63,20 +75,8 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
       merge score field: ls_plt
       
       create report ...
- 
-   --start transform score field: <<dl>>
- 
-   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]
- 
-   -- get input score endpoints ...
-      
-      begin calculating ...
-      
-      merge score field: dl_plt
-      
-      create report ...
-   
-   used time: 3.1701080799102783
+    
+   used time: 3.1701080799102783 # 运行时间
    
    --------------------------------------------------
    
@@ -85,11 +85,20 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
    Out[1]: 
    
       dl  ls  dl_plt  ls_plt
+      
    0  85  90      94      99
+
    1  92  85      98      97
+
    2  92  73      98      90
+
    3  88  90      96      99
+
    4  93  76      98      92
+   
+   [4] result.plot()  # 显示转换模型
+   
+   
       
 2. get module information from function see() 调用see()函数查看模块的信息
 
