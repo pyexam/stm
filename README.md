@@ -49,24 +49,41 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
     # use model shandong to transform at score field ls and dl
    
    [2] result = stm.run(name='shandong', df=data, field_list=('ls', 'dl'))
-   --- start calculating map_table ---
-    --start transform score field: <<ls>>
+  
+  --- start calculating map_table ---
+  
+  --start transform score field: <<ls>>
+  
       use filter: [(df.ls>=0.0) & (df.ls<=96.0)]
+ 
    -- get input score endpoints ...
+      
       begin calculating ...
+      
       merge score field: ls_plt
+      
       create report ...
+ 
    --start transform score field: <<dl>>
-      use filter: [(df.dl>=0.0) & (df.dl<=96.0)]
+ 
+   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]
+ 
    -- get input score endpoints ...
+      
       begin calculating ...
+      
       merge score field: dl_plt
+      
       create report ...
+   
    used time: 3.1701080799102783
+   
    --------------------------------------------------
    
    [3] result.output_data.head()  # 查看运行结果 view the result
+   
    Out[1]: 
+   
       dl  ls  dl_plt  ls_plt
    0  85  90      94      99
    1  92  85      98      97
