@@ -44,16 +44,21 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
    
    [1] import pyex_stm as stm
    
-    # 使用山东模型对数据框data中的分数字段ls和dl进行转换
-    # use model shandong to transform at score field ls and dl
+   使用山东模型对数据框data中的分数字段ls和dl进行转换
+   
+   use model shandong to transform at score field ls and dl
    
    [2] result = stm.run(name='shandong', df=data, field_list=('dl', 'ls'))
   
    --- start calculating map_table ---
 
-   --start transform score field: <<dl>>   // 开始转换分数dl(地理科目)
+   --start transform score field: <<dl>>  
  
-   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]  // 筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的数据
+     // 开始转换分数dl(地理科目)
+ 
+   use filter: [(df.dl>=0.0) & (df.dl<=96.0)]  
+     
+     // 筛选：过滤掉分数小于0或大于96(上限，不设置时为最高分)的数据
  
    -- get input score endpoints ... // 设置 分数区间
       
@@ -79,7 +84,9 @@ used to dispatch score value in Zhejiang, Shanghai, Beijing, Tianjin, Shandong, 
    
    --------------------------------------------------
    
-   [3] result.output_data.head()  # 查看运行结果 view the result
+   [3] result.output_data.head() 
+   
+   查看运行结果 view the result
    
    Out[1]: 
    
