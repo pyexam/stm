@@ -149,17 +149,22 @@ transform formulas: 0.5625*(x-80)+91
       
 2. get module information from function see() 调用see()函数查看模块的信息
 
-   stm.help_doc（）
+   stm.show()
    
    module function and class:
     
    [function] 模块中的主要函数
    
-          run(name, df, field_list, ratio, level_max, level_diff, input_score_max, input_score_min,
+          【show()】
           
-           output_score_decimal=0, approx_mode='near'): 运行各个模型的接口函数
+          提供关于模块的帮助信息
+          
+          【run(name, df, field_list, ratio, level_max, level_diff, input_score_max, input_score_min,
+          
+           output_score_decimal=0, approx_mode='near')】
            
-          
+          运行各个模型的接口函数
+                     
           通过指定name=‘shandong'/'shanghai'/'zhejiang'/'beijing'/'tianjin'/'tao'
           
           可以计算山东、上海、浙江、北京、天津、陶百强模型
@@ -212,19 +217,19 @@ transform formulas: 0.5625*(x-80)+91
           
           [4] result.output.head()
           
-       plot(): 
+       【plot()】
           
           各方案按照比例转换后分数后的分布直方图
           
           plot models distribution hist graph including shandong,zhejiang,shanghai,beijing,tianjin
           
-       round45i():
+       【round45i()】
           
           四舍五入函数
           
           function for rounding strictly at some decimal position
           
-       get_norm__dist_table(size, mean, std, stdnum): 
+       【get_norm__dist_table(size, mean, std, stdnum)】
           
           根据均值和标准差数生成正态分布表
        
@@ -254,7 +259,7 @@ transform formulas: 0.5625*(x-80)+91
    
    calculate level score by using shandong model, subject is 'ls' in input dataframe "data"
    
-4. result of model 模型运行结果
+4. get result of model 模型运行结果
 
    display report 显示运行报告
    
